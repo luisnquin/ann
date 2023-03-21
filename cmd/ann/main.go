@@ -38,6 +38,14 @@ func main() {
 			},
 		},
 		{
+			name: "Date time (UTC)",
+			task: func() (string, error) {
+				dt := faker.Date().UTC().Format(time.RFC3339)
+
+				return dt, clipboard.Set(dt)
+			},
+		},
+		{
 			name: "Email",
 			task: func() (string, error) {
 				email := faker.Email()
