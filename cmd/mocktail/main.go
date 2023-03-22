@@ -2,183 +2,139 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/d-tsuji/clipboard"
 	"github.com/google/uuid"
-	"github.com/marcusolsson/tui-go"
 	gonanoid "github.com/matoous/go-nanoid/v2"
+	"github.com/rivo/tview"
 )
 
 type tool struct {
-	name string
-	task func() (string, error)
+	name        string
+	description string
+	task        func() error
 }
 
 func main() {
 	faker := gofakeit.New(time.Now().Unix())
 
+	statusLeft, statusRight := tview.NewTextView(), tview.NewTextView()
+
+	updateClipboardAndStatus := func(s string) error {
+		statusLeft.SetLabel(s)
+
+		return clipboard.Set(s)
+	}
+
 	tools := []tool{
 		{
-			name: "UUID",
-			task: func() (string, error) {
-				uuid := uuid.NewString()
-
-				return uuid, clipboard.Set(uuid)
+			name:        "UUID",
+			description: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+			task: func() error {
+				return updateClipboardAndStatus(uuid.NewString())
 			},
 		},
 		{
-			name: "Nano ID",
-			task: func() (string, error) {
-				nanoid := gonanoid.Must()
-
-				return nanoid, clipboard.Set(nanoid)
+			name:        "Nano ID",
+			description: "PPPPPPP-CCCCC",
+			task: func() error {
+				return updateClipboardAndStatus(gonanoid.Must())
 			},
 		},
 		{
-			name: "Date time (UTC)",
-			task: func() (string, error) {
-				dt := faker.Date().UTC().Format(time.RFC3339)
-
-				return dt, clipboard.Set(dt)
+			name:        "Date time (UTC)",
+			description: time.RFC3339,
+			task: func() error {
+				return updateClipboardAndStatus(faker.Date().UTC().Format(time.RFC3339))
 			},
 		},
 		{
-			name: "Email",
-			task: func() (string, error) {
-				email := faker.Email()
-
-				return email, clipboard.Set(email)
+			name:        "Email",
+			description: "example@mail.org",
+			task: func() error {
+				return updateClipboardAndStatus(faker.Email())
 			},
 		},
 		{
-			name: "Full name",
-			task: func() (string, error) {
+			name:        "Full name",
+			description: "John Doe",
+			task: func() error {
 				p := faker.Person()
 
 				fullName := fmt.Sprintf("%s %s", p.FirstName, p.LastName)
 
-				return fullName, clipboard.Set(fullName)
+				return updateClipboardAndStatus(fullName)
 			},
 		},
 		{
-			name: "Username",
-			task: func() (string, error) {
-				username := faker.Username()
-
-				return username, clipboard.Set(username)
+			name:        "Username",
+			description: "guest256",
+			task: func() error {
+				return updateClipboardAndStatus(faker.Username())
 			},
 		},
 		{
-			name: "Phone number",
-			task: func() (string, error) {
-				phoneNumber := faker.Phone()
-
-				return phoneNumber, clipboard.Set(phoneNumber)
+			name:        "Phone number",
+			description: "##########",
+			task: func() error {
+				return updateClipboardAndStatus(faker.Phone())
 			},
 		},
 		{
-			name: "Credit card",
-			task: func() (string, error) {
+			name:        "Credit card",
+			description: "5370 1234 5678 9012",
+			task: func() error {
 				creditCard := faker.CreditCardNumber(&gofakeit.CreditCardOptions{
 					Types: []string{"visa", "mastercard"},
 					Gaps:  true,
 				})
 
-				return creditCard, clipboard.Set(creditCard)
+				return updateClipboardAndStatus(creditCard)
 			},
 		},
 		{
-			name: "Company",
-			task: func() (string, error) {
-				company := faker.Company()
-
-				return company, clipboard.Set(company)
-			},
-		},
-		{
-			name: "Phrase",
-			task: func() (string, error) {
-				phrase := faker.Phrase()
-
-				return phrase, clipboard.Set(phrase)
+			name:        "Phrase",
+			description: "How's it going?",
+			task: func() error {
+				return updateClipboardAndStatus(faker.Phrase())
 			},
 		},
 	}
 
-	generators := tui.NewTable(0, 0)
-	// library.SetColumnStretch(0, 1)
-	// library.SetColumnStretch(1, 1)
-	// library.SetColumnStretch(2, 4)
+	app := tview.NewApplication().EnableMouse(true)
 
-	generators.SetFocused(true)
+	list := tview.NewList()
 
-	generators.AppendRow(
-		tui.NewLabel("What do you want to generate?"),
-	)
+	for i, t := range tools {
+		shortcut := rune(int32(i + 1))
 
-	for _, tool := range tools {
-		label := tui.NewLabel(tool.name)
+		localTask := t.task
 
-		generators.AppendRow(
-			label,
-		)
+		list.AddItem(t.name, t.description, shortcut, func() {
+			if err := localTask(); err != nil {
+				panic(err) // TODO: improve error handling
+			}
+		})
 	}
 
-	currentClipboardText, err := clipboard.Get()
+	statusLeft.SetTitle("Clipboard").SetBorder(true)
+	statusRight.SetBorder(true)
+
+	clipboardText, err := clipboard.Get()
 	if err != nil {
 		panic(err)
 	}
 
-	statusLeft, statusRight := tui.NewStatusBar(""), tui.NewStatusBar("")
+	grid := tview.NewGrid().
+		AddItem(list, 0, 0, 7, 2, 0, 0, true).
+		AddItem(statusLeft.SetLabel(clipboardText), 7, 0, 1, 1, 0, 0, false).
+		AddItem(statusRight.SetLabel("Ninym Ralei the best girl"), 7, 1, 1, 1, 0, 0, false)
 
-	// This implies a weird behavior that pushes the text to the right side of the HBox
-	statusRight.SetPermanentText("Ninym Ralei the best possible girl")
+	grid.SetGap(1, 1).SetTitle("Main")
 
-	setClipboardStatus := func(s string) { statusLeft.SetText(fmt.Sprintf("Clipboard: %s", s)) }
-	setClipboardStatus(currentClipboardText)
-
-	statuses := tui.NewHBox(statusLeft, statusRight)
-	statuses.SetBorder(true)
-
-	root := tui.NewVBox(
-		generators,
-		tui.NewSpacer(),
-		statuses,
-	)
-
-	ui, err := tui.New(root)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	generators.OnItemActivated(func(t *tui.Table) {
-		if t.Selected() == 0 {
-			return
-		}
-
-		out, err := tools[t.Selected()-1].task()
-		if err != nil {
-			panic(err)
-		}
-
-		setClipboardStatus(out)
-	})
-
-	ui.SetKeybinding("Esc", func() { ui.Quit() })
-	ui.SetKeybinding("q", func() { ui.Quit() })
-
-	theme := tui.NewTheme()
-	theme.SetStyle("table.cell.selected", tui.Style{
-		Bold: tui.DecorationOn, Reverse: tui.DecorationOn,
-		Fg: tui.ColorBlue, Bg: tui.ColorWhite,
-	})
-
-	ui.SetTheme(theme)
-
-	if err := ui.Run(); err != nil {
-		log.Fatal(err)
+	if err := app.SetRoot(grid, true).Run(); err != nil {
+		panic(err)
 	}
 }
