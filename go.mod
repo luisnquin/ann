@@ -1,4 +1,4 @@
-module github.com/luisnquin/ann
+module github.com/luisnquin/mocktail
 
 go 1.20
 
