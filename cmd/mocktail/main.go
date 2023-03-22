@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/d-tsuji/clipboard"
 	"github.com/google/uuid"
+	"github.com/luisnquin/mocktail/internal/clipboard"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"github.com/rivo/tview"
 )
