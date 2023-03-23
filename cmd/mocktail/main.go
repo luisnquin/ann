@@ -14,7 +14,7 @@ import (
 type tool struct {
 	name        string
 	description string
-	task        func() error
+	task        func()
 }
 
 func main() {
@@ -22,84 +22,66 @@ func main() {
 
 	statusLeft, statusRight := tview.NewTextView(), tview.NewTextView()
 
-	updateClipboardAndStatus := func(s string) error {
-		statusLeft.SetLabel(s)
+	updateClipboardAndStatus := func(s string) func() {
+		return func() {
+			statusLeft.Lock()
+			statusLeft.SetLabel(s)
+			statusLeft.Unlock()
 
-		return clipboard.Set(s)
+			if err := clipboard.Set(s); err != nil {
+				panic(err) // TODO: improve error handling
+			}
+		}
 	}
 
 	tools := []tool{
 		{
 			name:        "UUID",
 			description: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-			task: func() error {
-				return updateClipboardAndStatus(uuid.NewString())
-			},
+			task:        updateClipboardAndStatus(uuid.NewString()),
 		},
 		{
 			name:        "Nano ID",
 			description: "PPPPPPP-CCCCC",
-			task: func() error {
-				return updateClipboardAndStatus(gonanoid.Must())
-			},
+			task:        updateClipboardAndStatus(gonanoid.Must()),
 		},
 		{
 			name:        "Date time (UTC)",
 			description: time.RFC3339,
-			task: func() error {
-				return updateClipboardAndStatus(faker.Date().UTC().Format(time.RFC3339))
-			},
+			task:        updateClipboardAndStatus(faker.Date().UTC().Format(time.RFC3339)),
 		},
 		{
 			name:        "Email",
 			description: "example@mail.org",
-			task: func() error {
-				return updateClipboardAndStatus(faker.Email())
-			},
+			task:        updateClipboardAndStatus(faker.Email()),
 		},
 		{
 			name:        "Full name",
 			description: "John Doe",
-			task: func() error {
-				p := faker.Person()
-
-				fullName := fmt.Sprintf("%s %s", p.FirstName, p.LastName)
-
-				return updateClipboardAndStatus(fullName)
-			},
+			task:        updateClipboardAndStatus(fmt.Sprintf("%s %s", faker.FirstName(), faker.LastName())),
 		},
 		{
 			name:        "Username",
 			description: "guest256",
-			task: func() error {
-				return updateClipboardAndStatus(faker.Username())
-			},
+			task:        updateClipboardAndStatus(faker.Username()),
 		},
 		{
 			name:        "Phone number",
 			description: "##########",
-			task: func() error {
-				return updateClipboardAndStatus(faker.Phone())
-			},
+			task:        updateClipboardAndStatus(faker.Phone()),
 		},
 		{
 			name:        "Credit card",
 			description: "5370 1234 5678 9012",
-			task: func() error {
-				creditCard := faker.CreditCardNumber(&gofakeit.CreditCardOptions{
-					Types: []string{"visa", "mastercard"},
-					Gaps:  true,
-				})
-
-				return updateClipboardAndStatus(creditCard)
-			},
+			task: updateClipboardAndStatus(faker.CreditCardNumber(&gofakeit.CreditCardOptions{
+				Types: []string{"visa", "mastercard"},
+				Gaps:  true,
+			})),
 		},
 		{
 			name:        "Phrase",
 			description: "How's it going?",
-			task: func() error {
-				return updateClipboardAndStatus(faker.Phrase())
-			},
+			task:        updateClipboardAndStatus(faker.Phrase()),
 		},
 	}
 
@@ -113,13 +95,12 @@ func main() {
 		localTask := t.task
 
 		list.AddItem(t.name, t.description, shortcut, func() {
-			if err := localTask(); err != nil {
-				panic(err) // TODO: improve error handling
-			}
+			localTask()
 		})
 	}
 
 	statusLeft.SetTitle("Clipboard").SetBorder(true)
+	statusLeft.SetLabelWidth(90)
 	statusRight.SetBorder(true)
 
 	clipboardText, err := clipboard.Get()
@@ -134,7 +115,32 @@ func main() {
 
 	grid.SetGap(1, 1).SetTitle("Main")
 
+	go seekClipboardForChanges(statusLeft)
+
 	if err := app.SetRoot(grid, true).Run(); err != nil {
 		panic(err)
+	}
+}
+
+func seekClipboardForChanges(statusLeft *tview.TextView) {
+	t := time.NewTicker(time.Second)
+
+	statusLeft.Lock()
+	lastClipText := statusLeft.GetLabel()
+	statusLeft.Unlock()
+
+	for range t.C {
+		clipContent, err := clipboard.Get()
+		if err != nil {
+			panic(err)
+		}
+
+		if clipContent != lastClipText {
+			lastClipText = clipContent
+
+			statusLeft.Lock()
+			statusLeft.SetLabel(lastClipText)
+			statusLeft.Unlock()
+		}
 	}
 }
