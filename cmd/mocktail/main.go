@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
+	"github.com/gdamore/tcell/v2"
 	"github.com/google/uuid"
 	"github.com/luisnquin/mocktail/internal/clipboard"
 	gonanoid "github.com/matoous/go-nanoid/v2"
@@ -16,6 +17,11 @@ type tool struct {
 	description string
 	task        func()
 }
+
+const (
+	DefaultStatusRightTitle = "A truth"
+	DefaultStatusRightLabel = "Ninym Ralei the best girl"
+)
 
 func main() {
 	faker := gofakeit.New(time.Now().Unix())
@@ -101,8 +107,9 @@ func main() {
 
 	statusLeft.SetTitle("Clipboard").SetBorder(true)
 	statusLeft.SetLabelWidth(90)
+	// statusLeft.SetBackgroundColor(tcell.ColorTeal)
 
-	statusRight.SetTitle("A truth").SetBorder(true)
+	statusRight.SetTitle(DefaultStatusRightTitle).SetBorder(true)
 	statusRight.SetBorderPadding(0, 0, 1, 0)
 
 	clipboardText, err := clipboard.Get()
@@ -113,18 +120,18 @@ func main() {
 	grid := tview.NewGrid().
 		AddItem(list, 0, 0, 7, 2, 0, 0, true).
 		AddItem(statusLeft.SetLabel(clipboardText), 7, 0, 1, 1, 0, 0, false).
-		AddItem(statusRight.SetLabel("Ninym Ralei the best girl"), 7, 1, 1, 1, 0, 0, false)
+		AddItem(statusRight.SetLabel(DefaultStatusRightLabel), 7, 1, 1, 1, 0, 0, false)
 
 	grid.SetGap(1, 1).SetTitle("Main")
 
-	go seekClipboardForChanges(statusLeft)
+	go seekClipboardForChanges(statusLeft, statusRight)
 
 	if err := app.SetRoot(grid, true).Run(); err != nil {
 		panic(err)
 	}
 }
 
-func seekClipboardForChanges(statusLeft *tview.TextView) {
+func seekClipboardForChanges(statusLeft, statusRight *tview.TextView) {
 	t := time.NewTicker(time.Second)
 
 	statusLeft.Lock()
@@ -134,10 +141,28 @@ func seekClipboardForChanges(statusLeft *tview.TextView) {
 	for range t.C {
 		clipContent, err := clipboard.Get()
 		if err != nil {
-			panic(err)
+			statusRight.Lock() // ! Yeah, beautiful but verbose and not reusable
+			statusRight.SetBorderColor(tcell.Color196)
+			statusRight.SetTitle("Error")
+			statusRight.SetLabel(fmt.Sprintf("from refresh func: %s", err.Error()))
+			statusRight.Unlock()
+
+			time.Sleep(time.Second * 3)
+
+			statusRight.Lock()
+			statusRight.SetBorderColor(tcell.ColorWhite)
+			statusRight.SetTitle(DefaultStatusRightTitle)
+			statusRight.SetLabel(DefaultStatusRightLabel)
+			statusRight.Unlock()
+
+			time.Sleep(time.Second)
+
+			continue
 		}
 
 		if clipContent != lastClipText {
+			statusRight.SetBackgroundColor(tcell.Color196)
+
 			lastClipText = clipContent
 
 			statusLeft.Lock()
