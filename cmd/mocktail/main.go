@@ -101,7 +101,9 @@ func main() {
 
 	statusLeft.SetTitle("Clipboard").SetBorder(true)
 	statusLeft.SetLabelWidth(90)
-	statusRight.SetBorder(true)
+
+	statusRight.SetTitle("A truth").SetBorder(true)
+	statusRight.SetBorderPadding(0, 0, 1, 0)
 
 	clipboardText, err := clipboard.Get()
 	if err != nil {
