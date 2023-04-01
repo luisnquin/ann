@@ -6,7 +6,7 @@ import (
 )
 
 func get() (string, error) {
-	cmd := exec.Command("xclip", "-o")
+	cmd := exec.Command("xclip", "-selection", "c", "-o")
 	b := new(bytes.Buffer)
 	cmd.Stdout = b
 
