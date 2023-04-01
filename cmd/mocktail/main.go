@@ -28,13 +28,15 @@ func main() {
 
 	statusLeft, statusRight := tview.NewTextView(), tview.NewTextView()
 
-	updateClipboardAndStatus := func(s string) func() {
+	updateClipboardAndStatus := func(f func() string) func() {
 		return func() {
+			text := f()
+
 			statusLeft.Lock()
-			statusLeft.SetLabel(s)
+			statusLeft.SetLabel(text)
 			statusLeft.Unlock()
 
-			if err := clipboard.Set(s); err != nil {
+			if err := clipboard.Set(text); err != nil {
 				panic(err) // TODO: improve error handling
 			}
 		}
@@ -44,50 +46,52 @@ func main() {
 		{
 			name:        "UUID",
 			description: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-			task:        updateClipboardAndStatus(uuid.NewString()),
+			task:        updateClipboardAndStatus(func() string { return uuid.NewString() }),
 		},
 		{
 			name:        "Nano ID",
 			description: "PPPPPPP-CCCCC",
-			task:        updateClipboardAndStatus(gonanoid.Must()),
+			task:        updateClipboardAndStatus(func() string { return gonanoid.Must() }),
 		},
 		{
 			name:        "Date time (UTC)",
 			description: time.RFC3339,
-			task:        updateClipboardAndStatus(faker.Date().UTC().Format(time.RFC3339)),
+			task:        updateClipboardAndStatus(func() string { return faker.Date().UTC().Format(time.RFC3339) }),
 		},
 		{
 			name:        "Email",
 			description: "example@mail.org",
-			task:        updateClipboardAndStatus(faker.Email()),
+			task:        updateClipboardAndStatus(func() string { return faker.Email() }),
 		},
 		{
 			name:        "Full name",
 			description: "John Doe",
-			task:        updateClipboardAndStatus(fmt.Sprintf("%s %s", faker.FirstName(), faker.LastName())),
+			task:        updateClipboardAndStatus(func() string { return fmt.Sprintf("%s %s", faker.FirstName(), faker.LastName()) }),
 		},
 		{
 			name:        "Username",
 			description: "guest256",
-			task:        updateClipboardAndStatus(faker.Username()),
+			task:        updateClipboardAndStatus(func() string { return faker.Username() }),
 		},
 		{
 			name:        "Phone number",
 			description: "##########",
-			task:        updateClipboardAndStatus(faker.Phone()),
+			task:        updateClipboardAndStatus(func() string { return faker.Phone() }),
 		},
 		{
 			name:        "Credit card",
 			description: "5370 1234 5678 9012",
-			task: updateClipboardAndStatus(faker.CreditCardNumber(&gofakeit.CreditCardOptions{
-				Types: []string{"visa", "mastercard"},
-				Gaps:  true,
-			})),
+			task: updateClipboardAndStatus(func() string {
+				return faker.CreditCardNumber(&gofakeit.CreditCardOptions{
+					Types: []string{"visa", "mastercard"},
+					Gaps:  true,
+				})
+			}),
 		},
 		{
 			name:        "Phrase",
 			description: "How's it going?",
-			task:        updateClipboardAndStatus(faker.Phrase()),
+			task:        updateClipboardAndStatus(func() string { return faker.Phrase() }),
 		},
 	}
 
@@ -161,8 +165,6 @@ func seekClipboardForChanges(statusLeft, statusRight *tview.TextView) {
 		}
 
 		if clipContent != lastClipText {
-			statusRight.SetBackgroundColor(tcell.Color196)
-
 			lastClipText = clipContent
 
 			statusLeft.Lock()
