@@ -63,8 +63,16 @@ func main() {
 			generator: faker.PostalCode,
 		},
 		{
+			name:      "City",
+			generator: faker.City,
+		},
+		{
 			name:      "Address",
 			generator: faker.Address,
+		},
+		{
+			name:      "Hexadecimal color",
+			generator: faker.HexColor,
 		},
 	}
 

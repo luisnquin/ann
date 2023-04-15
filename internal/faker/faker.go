@@ -72,3 +72,11 @@ func Address() string {
 
 	return fmt.Sprintf("%s, %s, %s %s", address.Street, address.City, address.Country, address.Zip)
 }
+
+func City() string {
+	return kolpaFaker.City()
+}
+
+func HexColor() string {
+	return goFakeItFaker.HexColor()
+}
