@@ -58,3 +58,11 @@ func CreditCardNumber() string {
 		Gaps:  true,
 	})
 }
+
+func PostalCode() string {
+	if false {
+		return goFakeItFaker.Zip()
+	}
+
+	return kolpaFaker.Postcode()
+}

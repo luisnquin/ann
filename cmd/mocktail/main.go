@@ -84,6 +84,11 @@ func main() {
 			description: "Eius sit non quod tempore nisi vitae rerum velit ",
 			task:        updateClipboardAndStatus(func() string { return faker.LoremSentence() }),
 		},
+		{
+			name:        "Postal code",
+			description: "92527 - 6151",
+			task:        updateClipboardAndStatus(func() string { return faker.PostalCode() }),
+		},
 	}
 
 	app := tview.NewApplication().EnableMouse(true)
