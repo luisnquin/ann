@@ -42,52 +42,52 @@ func main() {
 		{
 			name:        "UUID",
 			description: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-			task:        updateClipboardAndStatus(func() string { return faker.UUID() }),
+			task:        updateClipboardAndStatus(faker.UUID),
 		},
 		{
 			name:        "Nano ID",
 			description: "PPPPPPP-CCCCC",
-			task:        updateClipboardAndStatus(func() string { return faker.NanoID() }),
+			task:        updateClipboardAndStatus(faker.NanoID),
 		},
 		{
 			name:        "Date time (UTC)",
 			description: time.RFC3339,
-			task:        updateClipboardAndStatus(func() string { return faker.DateTime() }),
+			task:        updateClipboardAndStatus(faker.DateTime),
 		},
 		{
 			name:        "Email",
 			description: "example@mail.org",
-			task:        updateClipboardAndStatus(func() string { return faker.Email() }),
+			task:        updateClipboardAndStatus(faker.Email),
 		},
 		{
 			name:        "Full name",
 			description: "John Doe",
-			task:        updateClipboardAndStatus(func() string { return faker.FullName() }),
+			task:        updateClipboardAndStatus(faker.FullName),
 		},
 		{
 			name:        "Username",
 			description: "guest256",
-			task:        updateClipboardAndStatus(func() string { return faker.Username() }),
+			task:        updateClipboardAndStatus(faker.Username),
 		},
 		{
 			name:        "Phone number",
 			description: "+1-152-019-318",
-			task:        updateClipboardAndStatus(func() string { return faker.PhoneNumber() }),
+			task:        updateClipboardAndStatus(faker.PhoneNumber),
 		},
 		{
 			name:        "Credit card",
 			description: "5370 1234 5678 9012",
-			task:        updateClipboardAndStatus(func() string { return faker.CreditCardNumber() }),
+			task:        updateClipboardAndStatus(faker.CreditCardNumber),
 		},
 		{
 			name:        "Lorem sentence",
 			description: "Eius sit non quod tempore nisi vitae rerum velit ",
-			task:        updateClipboardAndStatus(func() string { return faker.LoremSentence() }),
+			task:        updateClipboardAndStatus(faker.LoremSentence),
 		},
 		{
 			name:        "Postal code",
 			description: "92527 - 6151",
-			task:        updateClipboardAndStatus(func() string { return faker.PostalCode() }),
+			task:        updateClipboardAndStatus(faker.PostalCode),
 		},
 	}
 
@@ -141,7 +141,7 @@ func seekClipboardForChanges(statusLeft, statusRight *tview.TextView) {
 	for range t.C {
 		clipContent, err := clipboard.Get()
 		if err != nil {
-			statusRight.Lock() // ! Yeah, beautiful but verbose and not reusable
+			statusRight.Lock()
 			statusRight.SetBorderColor(tcell.Color196)
 			statusRight.SetTitle("Error")
 			statusRight.SetLabel(fmt.Sprintf("from refresh func: %s", err.Error()))
