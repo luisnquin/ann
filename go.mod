@@ -7,6 +7,7 @@ require (
 	github.com/d-tsuji/clipboard v0.0.3
 	github.com/gdamore/tcell/v2 v2.6.0
 	github.com/google/uuid v1.3.0
+	github.com/malisit/kolpa v0.0.0-20201024193526-315f7b3afa5d
 	github.com/matoous/go-nanoid/v2 v2.0.0
 	github.com/rivo/tview v0.0.0-20230320095235-84f9c0ff9de8
 )
