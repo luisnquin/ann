@@ -11,9 +11,8 @@ import (
 )
 
 type tool struct {
-	name        string
-	description string
-	generator   func() string
+	name      string
+	generator func() string
 }
 
 const (
@@ -24,59 +23,48 @@ const (
 func main() {
 	tools := []tool{
 		{
-			name:        "UUID",
-			description: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-			generator:   faker.UUID,
+			name:      "UUID",
+			generator: faker.UUID,
 		},
 		{
-			name:        "Nano ID",
-			description: "PPPPPPP-CCCCC",
-			generator:   faker.NanoID,
+			name:      "Nano ID",
+			generator: faker.NanoID,
 		},
 		{
-			name:        "Date time (UTC)",
-			description: time.RFC3339,
-			generator:   faker.DateTime,
+			name:      "Date time (UTC)",
+			generator: faker.DateTime,
 		},
 		{
-			name:        "Email",
-			description: "example@mail.org",
-			generator:   faker.Email,
+			name:      "Email",
+			generator: faker.Email,
 		},
 		{
-			name:        "Full name",
-			description: "John Doe",
-			generator:   faker.FullName,
+			name:      "Full name",
+			generator: faker.FullName,
 		},
 		{
-			name:        "Username",
-			description: "guest256",
-			generator:   faker.Username,
+			name:      "Username",
+			generator: faker.Username,
 		},
 		{
-			name:        "Phone number",
-			description: "+1-152-019-318",
-			generator:   faker.PhoneNumber,
+			name:      "Phone number",
+			generator: faker.PhoneNumber,
 		},
 		{
-			name:        "Credit card",
-			description: "5370 1234 5678 9012",
-			generator:   faker.CreditCardNumber,
+			name:      "Credit card",
+			generator: faker.CreditCardNumber,
 		},
 		{
-			name:        "Lorem sentence",
-			description: "Eius sit non quod tempore nisi vitae rerum velit ",
-			generator:   faker.LoremSentence,
+			name:      "Lorem sentence",
+			generator: faker.LoremSentence,
 		},
 		{
-			name:        "Postal code",
-			description: "92527 - 6151",
-			generator:   faker.PostalCode,
+			name:      "Postal code",
+			generator: faker.PostalCode,
 		},
 		{
-			name:        "Address",
-			description: "52185 Katelyn Court Suite 559, Romanstad, AZ 80645",
-			generator:   faker.Address,
+			name:      "Address",
+			generator: faker.Address,
 		},
 	}
 
@@ -90,7 +78,7 @@ func main() {
 
 		generator := t.generator
 
-		list.AddItem(t.name, t.description, shortcut, func() {
+		list.AddItem(t.name, generator(), shortcut, func() {
 			text := generator()
 
 			statusLeft.Lock()
