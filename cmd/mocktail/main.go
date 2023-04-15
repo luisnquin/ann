@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gdamore/tcell/v2"
-	"github.com/google/uuid"
 	"github.com/luisnquin/mocktail/internal/clipboard"
-	gonanoid "github.com/matoous/go-nanoid/v2"
+	"github.com/luisnquin/mocktail/internal/faker"
 	"github.com/rivo/tview"
 )
 
@@ -24,8 +22,6 @@ const (
 )
 
 func main() {
-	faker := gofakeit.New(time.Now().Unix())
-
 	statusLeft, statusRight := tview.NewTextView(), tview.NewTextView()
 
 	updateClipboardAndStatus := func(f func() string) func() {
@@ -46,17 +42,17 @@ func main() {
 		{
 			name:        "UUID",
 			description: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-			task:        updateClipboardAndStatus(func() string { return uuid.NewString() }),
+			task:        updateClipboardAndStatus(func() string { return faker.UUID() }),
 		},
 		{
 			name:        "Nano ID",
 			description: "PPPPPPP-CCCCC",
-			task:        updateClipboardAndStatus(func() string { return gonanoid.Must() }),
+			task:        updateClipboardAndStatus(func() string { return faker.NanoID() }),
 		},
 		{
 			name:        "Date time (UTC)",
 			description: time.RFC3339,
-			task:        updateClipboardAndStatus(func() string { return faker.Date().UTC().Format(time.RFC3339) }),
+			task:        updateClipboardAndStatus(func() string { return faker.DateTime() }),
 		},
 		{
 			name:        "Email",
@@ -66,7 +62,7 @@ func main() {
 		{
 			name:        "Full name",
 			description: "John Doe",
-			task:        updateClipboardAndStatus(func() string { return fmt.Sprintf("%s %s", faker.FirstName(), faker.LastName()) }),
+			task:        updateClipboardAndStatus(func() string { return faker.FullName() }),
 		},
 		{
 			name:        "Username",
@@ -75,23 +71,18 @@ func main() {
 		},
 		{
 			name:        "Phone number",
-			description: "##########",
-			task:        updateClipboardAndStatus(func() string { return faker.Phone() }),
+			description: "+1-152-019-318",
+			task:        updateClipboardAndStatus(func() string { return faker.PhoneNumber() }),
 		},
 		{
 			name:        "Credit card",
 			description: "5370 1234 5678 9012",
-			task: updateClipboardAndStatus(func() string {
-				return faker.CreditCardNumber(&gofakeit.CreditCardOptions{
-					Types: []string{"visa", "mastercard"},
-					Gaps:  true,
-				})
-			}),
+			task:        updateClipboardAndStatus(func() string { return faker.CreditCardNumber() }),
 		},
 		{
-			name:        "Phrase",
-			description: "How's it going?",
-			task:        updateClipboardAndStatus(func() string { return faker.Phrase() }),
+			name:        "Lorem sentence",
+			description: "Eius sit non quod tempore nisi vitae rerum velit ",
+			task:        updateClipboardAndStatus(func() string { return faker.LoremSentence() }),
 		},
 	}
 
