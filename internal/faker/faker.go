@@ -66,3 +66,9 @@ func PostalCode() string {
 
 	return kolpaFaker.Postcode()
 }
+
+func Address() string {
+	address := goFakeItFaker.Address()
+
+	return fmt.Sprintf("%s, %s, %s %s", address.Street, address.City, address.Country, address.Zip)
+}

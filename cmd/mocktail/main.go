@@ -13,7 +13,7 @@ import (
 type tool struct {
 	name        string
 	description string
-	task        func()
+	generator   func() string
 }
 
 const (
@@ -22,11 +22,76 @@ const (
 )
 
 func main() {
+	tools := []tool{
+		{
+			name:        "UUID",
+			description: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+			generator:   faker.UUID,
+		},
+		{
+			name:        "Nano ID",
+			description: "PPPPPPP-CCCCC",
+			generator:   faker.NanoID,
+		},
+		{
+			name:        "Date time (UTC)",
+			description: time.RFC3339,
+			generator:   faker.DateTime,
+		},
+		{
+			name:        "Email",
+			description: "example@mail.org",
+			generator:   faker.Email,
+		},
+		{
+			name:        "Full name",
+			description: "John Doe",
+			generator:   faker.FullName,
+		},
+		{
+			name:        "Username",
+			description: "guest256",
+			generator:   faker.Username,
+		},
+		{
+			name:        "Phone number",
+			description: "+1-152-019-318",
+			generator:   faker.PhoneNumber,
+		},
+		{
+			name:        "Credit card",
+			description: "5370 1234 5678 9012",
+			generator:   faker.CreditCardNumber,
+		},
+		{
+			name:        "Lorem sentence",
+			description: "Eius sit non quod tempore nisi vitae rerum velit ",
+			generator:   faker.LoremSentence,
+		},
+		{
+			name:        "Postal code",
+			description: "92527 - 6151",
+			generator:   faker.PostalCode,
+		},
+		{
+			name:        "Address",
+			description: "52185 Katelyn Court Suite 559, Romanstad, AZ 80645",
+			generator:   faker.Address,
+		},
+	}
+
+	app := tview.NewApplication().EnableMouse(true)
+
+	list := tview.NewList()
 	statusLeft, statusRight := tview.NewTextView(), tview.NewTextView()
 
-	updateClipboardAndStatus := func(f func() string) func() {
-		return func() {
-			text := f()
+	for i, t := range tools {
+		shortcut := rune(int32(i + 1))
+
+		generator := t.generator
+
+		list.AddItem(t.name, t.description, shortcut, func() {
+			text := generator()
 
 			statusLeft.Lock()
 			statusLeft.SetLabel(text)
@@ -35,73 +100,6 @@ func main() {
 			if err := clipboard.Set(text); err != nil {
 				panic(err) // TODO: improve error handling
 			}
-		}
-	}
-
-	tools := []tool{
-		{
-			name:        "UUID",
-			description: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-			task:        updateClipboardAndStatus(faker.UUID),
-		},
-		{
-			name:        "Nano ID",
-			description: "PPPPPPP-CCCCC",
-			task:        updateClipboardAndStatus(faker.NanoID),
-		},
-		{
-			name:        "Date time (UTC)",
-			description: time.RFC3339,
-			task:        updateClipboardAndStatus(faker.DateTime),
-		},
-		{
-			name:        "Email",
-			description: "example@mail.org",
-			task:        updateClipboardAndStatus(faker.Email),
-		},
-		{
-			name:        "Full name",
-			description: "John Doe",
-			task:        updateClipboardAndStatus(faker.FullName),
-		},
-		{
-			name:        "Username",
-			description: "guest256",
-			task:        updateClipboardAndStatus(faker.Username),
-		},
-		{
-			name:        "Phone number",
-			description: "+1-152-019-318",
-			task:        updateClipboardAndStatus(faker.PhoneNumber),
-		},
-		{
-			name:        "Credit card",
-			description: "5370 1234 5678 9012",
-			task:        updateClipboardAndStatus(faker.CreditCardNumber),
-		},
-		{
-			name:        "Lorem sentence",
-			description: "Eius sit non quod tempore nisi vitae rerum velit ",
-			task:        updateClipboardAndStatus(faker.LoremSentence),
-		},
-		{
-			name:        "Postal code",
-			description: "92527 - 6151",
-			task:        updateClipboardAndStatus(faker.PostalCode),
-		},
-	}
-
-	app := tview.NewApplication().EnableMouse(true)
-
-	list := tview.NewList()
-
-	for i, t := range tools {
-		shortcut := rune(int32(i + 1))
-
-		localTask := t.task
-
-		list.AddItem(t.name, t.description, shortcut, func() {
-			localTask()
 		})
 	}
 
