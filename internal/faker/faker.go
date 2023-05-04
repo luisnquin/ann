@@ -6,6 +6,7 @@ import (
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/google/uuid"
+	"github.com/luisnquin/randatetime"
 	"github.com/malisit/kolpa"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
@@ -25,7 +26,7 @@ func Username() string {
 }
 
 func DateTime() string {
-	return goFakeItFaker.Date().UTC().Format(time.RFC3339)
+	return randatetime.BetweenYears(2020, 2023).UTC().Format(time.RFC3339)
 }
 
 func Email() string {
