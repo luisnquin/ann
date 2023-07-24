@@ -13,6 +13,9 @@ build:
 		-ldflags "-w -s -a" \
 		-o ./build/$(NAME) ./cmd/mocktail
 
+run: build
+	./build/$(NAME)
+
 race:
 	@mkdir -p ./build
 	@CGO_ENABLED=1 go build -race  -o ./build/$(NAME) ./cmd/mocktail
