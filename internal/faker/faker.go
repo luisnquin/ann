@@ -29,6 +29,10 @@ func DateTime() string {
 	return randatetime.BetweenYears(2020, 2023).UTC().Format(time.RFC3339)
 }
 
+func Date() string {
+	return randatetime.BetweenYears(2020, 2023).UTC().Format(time.DateOnly)
+}
+
 func Email() string {
 	return goFakeItFaker.Email()
 }
