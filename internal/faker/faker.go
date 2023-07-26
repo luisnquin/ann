@@ -3,6 +3,7 @@ package faker
 import (
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
@@ -86,4 +87,23 @@ func City() string {
 
 func HexColor() string {
 	return goFakeItFaker.HexColor()
+}
+
+func EmployeeCode() string {
+	maxLen := 8
+
+	const possibleLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	const possibleNumbers = "123456789"
+
+	var b strings.Builder
+
+	for i := 0; i < maxLen; i++ {
+		crumb := possibleNumbers[rand.Intn(len(possibleNumbers))]
+		b.WriteByte(crumb)
+	}
+
+	finalCrumb := possibleLetters[rand.Intn(len(possibleLetters))]
+	b.WriteByte(finalCrumb)
+
+	return b.String()
 }

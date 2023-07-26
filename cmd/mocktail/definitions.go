@@ -65,6 +65,10 @@ func getGenerators() []generatorItem {
 			name:      "Hexadecimal color",
 			generator: faker.HexColor,
 		},
+		{
+			name:      "Employee code",
+			generator: faker.EmployeeCode,
+		},
 	}
 }
 
