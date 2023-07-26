@@ -2,6 +2,7 @@ package faker
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
@@ -17,6 +18,7 @@ var (
 )
 
 func init() {
+	rand.Seed(time.Now().Unix())
 	goFakeItFaker = gofakeit.New(time.Now().Unix())
 	kolpaFaker = kolpa.C("en_US")
 }
