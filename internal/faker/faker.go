@@ -41,7 +41,12 @@ func Email() string {
 }
 
 func NanoID() string {
-	return gonanoid.Must()
+	id, _ := gonanoid.Generate("-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 14)
+	if id[0] == '-' || id[len(id)-1] == '-' {
+		return NanoID()
+	}
+
+	return id
 }
 
 func UUID() string {
