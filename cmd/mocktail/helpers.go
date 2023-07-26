@@ -4,8 +4,8 @@ import (
 	"math/rand"
 )
 
-func getRandomQuote() string {
-	quotes := getQuotes()
+func getRandomProgramQuote() string {
+	quotes := getProgramQuotes()
 
 	return quotes[rand.Intn(len(quotes))]
 }

@@ -20,7 +20,7 @@ func getConfig() config {
 	var c config
 
 	c.StatusRight.Title = "A truth"
-	c.StatusRight.Label = getRandomQuote()
+	c.StatusRight.Label = getRandomProgramQuote()
 
 	return c
 }

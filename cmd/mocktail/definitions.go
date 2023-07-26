@@ -72,7 +72,7 @@ func getGenerators() []generatorItem {
 	}
 }
 
-func getQuotes() []string {
+func getProgramQuotes() []string {
 	return []string{
 		"Infinite stars, infinite possibilities.",
 		"In the vastness lies the unknown.",
@@ -103,7 +103,6 @@ func getQuotes() []string {
 		"Love is the canvas of existence.",
 		"Perception shapes our reality.",
 		"Through doubt, we find certainty.",
-		"Ninym Ralei the best girl",
 		"The mind is the universe's greatest enigma.",
 		"Within the depths of uncertainty, lies truth.",
 		"Time dances to the melody of eternity.",
