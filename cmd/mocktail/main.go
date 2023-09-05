@@ -59,7 +59,7 @@ func main() {
 
 	clipboardText, err := clipboard.Get()
 	if err != nil {
-		panic(err)
+		clipboardText = "Nothing"
 	}
 
 	grid := tview.NewGrid().
