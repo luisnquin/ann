@@ -8,66 +8,68 @@ type generatorItem struct {
 }
 
 func getGenerators() []generatorItem {
+	generator := faker.NewGenerator()
+
 	return []generatorItem{
 		{
 			name:      "UUID",
-			generator: faker.UUID,
+			generator: generator.UUID,
 		},
 		{
 			name:      "Nano ID",
-			generator: faker.NanoID,
+			generator: generator.NanoID,
 		},
 		{
 			name:      "Date time (UTC)",
-			generator: faker.DateTime,
+			generator: generator.DateTime,
 		},
 		{
 			name:      "Date",
-			generator: faker.Date,
+			generator: generator.Date,
 		},
 		{
 			name:      "Email",
-			generator: faker.Email,
+			generator: generator.Email,
 		},
 		{
 			name:      "Full name",
-			generator: faker.FullName,
+			generator: generator.FullName,
 		},
 		{
 			name:      "Username",
-			generator: faker.Username,
+			generator: generator.Username,
 		},
 		{
 			name:      "Phone number",
-			generator: faker.PhoneNumber,
+			generator: generator.PhoneNumber,
 		},
 		{
 			name:      "Credit card",
-			generator: faker.CreditCardNumber,
+			generator: generator.CreditCardNumber,
 		},
 		{
-			name:      "Lorem sentence",
-			generator: faker.LoremSentence,
+			name:      "Sentence",
+			generator: generator.Sentence,
 		},
 		{
 			name:      "Postal code",
-			generator: faker.PostalCode,
+			generator: generator.PostalCode,
 		},
 		{
 			name:      "City",
-			generator: faker.City,
+			generator: generator.City,
 		},
 		{
 			name:      "Address",
-			generator: faker.Address,
+			generator: generator.Address,
 		},
 		{
 			name:      "Hexadecimal color",
-			generator: faker.HexColor,
+			generator: generator.HexColor,
 		},
 		{
 			name:      "Employee code",
-			generator: faker.EmployeeCode,
+			generator: generator.EmployeeCode,
 		},
 	}
 }

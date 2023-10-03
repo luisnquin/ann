@@ -21,6 +21,7 @@ require (
 	github.com/lxn/walk v0.0.0-20191128110447-55ccb3a9f5c1 // indirect
 	github.com/lxn/win v0.0.0-20191128105842-2da648fda5b4 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
+	github.com/pioz/faker v1.7.3 // indirect
 	github.com/rivo/uniseg v0.4.3 // indirect
 	github.com/stretchr/testify v1.7.5 // indirect
 	golang.org/x/sys v0.5.0 // indirect
