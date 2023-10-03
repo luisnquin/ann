@@ -4,12 +4,20 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 )
 
 func get() (string, error) {
-	cmd := exec.Command("xclip", "-selection", "c", "-o")
+	var cmd *exec.Cmd
+
+	if isUsingWayland() {
+		cmd = exec.Command("wl-paste")
+	} else {
+		cmd = exec.Command("xclip", "-selection", "c", "-o")
+	}
+
 	var b, bErr bytes.Buffer
 
 	cmd.Stdout = &b
@@ -25,8 +33,21 @@ func get() (string, error) {
 }
 
 func set(text string) error {
-	cmd := exec.Command("xclip", "-selection", "clipboard")
+	var cmd *exec.Cmd
+
+	if isUsingWayland() {
+		cmd = exec.Command("wl-copy")
+	} else {
+		cmd = exec.Command("xclip", "-selection", "clipboard")
+	}
+
 	cmd.Stdin = bytes.NewReader([]byte(text))
 
 	return cmd.Run()
+}
+
+func isUsingWayland() bool {
+	sessionType, waylandDisplay := os.Getenv("XDG_SESSION_TYPE"), os.Getenv("WAYLAND_DISPLAY")
+
+	return sessionType == "wayland" || strings.HasPrefix(waylandDisplay, "wayland")
 }
