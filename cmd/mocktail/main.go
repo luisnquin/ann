@@ -67,6 +67,21 @@ func main() {
 		AddItem(statusLeft.SetLabel(clipboardText), 7, 0, 1, 1, 0, 0, false).
 		AddItem(statusRight.SetLabel(config.StatusRight.Label), 7, 1, 1, 1, 0, 0, false)
 
+	statusLeft.SetBackgroundColor(tcell.Color141)
+
+	statusRight.SetBackgroundColor(tcell.Color152)
+	statusRight.SetTextColor(tcell.Color129)
+	statusRight.SetTitleColor(tcell.Color145)
+	statusRight.SetBorderColor(tcell.Color145)
+
+	list.SetShortcutColor(tcell.Color115)
+	list.SetMainTextColor(tcell.Color140)
+	list.SetSecondaryTextColor(tcell.Color101)
+	list.SetBackgroundColor(tcell.Color192)
+	list.SetBorderPadding(1, 0, 0, 0)
+
+	grid.SetBorderPadding(0, 1, 0, 0)
+
 	grid.SetGap(1, 1).SetTitle("Main")
 
 	go seekClipboardForChanges(config, statusLeft, statusRight)
